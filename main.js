@@ -11,7 +11,6 @@ app.use(bodyParser.urlencoded());
 
 
 app.post('/', function(req, res) {
-	console.log(req.body.command);
     var result = processRequest(req.body.command);
     res.json(result);
 });

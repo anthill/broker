@@ -5,12 +5,21 @@ var exec = require('child_process').exec;
 var psTree = require('ps-tree');
 
 
+
 var fsm = new machina.Fsm({
+
+    vwdialPid: null,
+
     connect3G: function() {
-        var offline = false;
-        // do the command
-        this.transition( "3G_connected" );
-        return offline;
+        this.vwdialPid = runCommand("wvdial 3G");
+        if (this.vwdialPid !== null){
+            this.transition( "3G_connected" );
+        };
+    },
+
+    disconnect3G: function() {
+        killProcess(this.vwdialPid);
+        this.transition( "3G_disconnected" );
     },
 
 
@@ -23,7 +32,7 @@ var fsm = new machina.Fsm({
             },
 
             "tell.connected" : function( payload ) {
-                console.log("connected")
+                console.log("connected, pid: " + this.vwdialPid)
             }
         },
 
@@ -36,19 +45,20 @@ var fsm = new machina.Fsm({
 });
 
 
-  // var myProcess = exec(command);
-  // myProcess.stdout.pipe(process.stdout);
-  // myProcess.stderr.pipe(process.stderr);
-  // myProcess.on('exit', theEnd);
-  // myProcess.on('uncaughtException', theEnd);
+function runCommand(command) {
+  var myProcess = exec(command);
+  myProcess.stdout.pipe(process.stdout);
+  myProcess.stderr.pipe(process.stderr);
+  if (myProcess.error !== null){
+    return null;
+  } else {
+    return myProcess.pid
+  }
 
-  // console.log('process, myProcess, casper', process.pid, myProcess.pid);
+};
 
 
-
-
-
-var kill = function (pid, signal, callback) {
+function killProcess(pid, signal, callback) {
     signal   = signal || 'SIGKILL';
     callback = callback || function () {};
     var killTree = true;
@@ -70,16 +80,5 @@ var kill = function (pid, signal, callback) {
         callback();
     }
 };
-
-function theEnd(code){
-    console.log('casper process exit with code', code);
-    // serverProcess.on('exit', function(){
-    //     process.exit(code);
-    // });
-    // serverProcess.kill();
-}
-
-
-// kill(child.pid);
 
 module.exports = fsm
