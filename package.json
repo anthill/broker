@@ -13,6 +13,6 @@
     "connect": "^3.3.4",
     "express": "^4.10.7",
     "machina": "^0.4.0",
-    "ps-tree": "0.0.3"
+    "tree-kill": "0.0.6"
   }
 }

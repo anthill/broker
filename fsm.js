@@ -1,24 +1,25 @@
 "use strict";
 
 var machina = require('machina');
-var exec = require('child_process').exec;
-var psTree = require('ps-tree');
-
+var spawn = require('child_process').spawn;
+var kill = require('tree-kill');
 
 
 var fsm = new machina.Fsm({
 
-    vwdialPid: null,
+    wvdialPid: null,
 
     connect3G: function() {
-        this.vwdialPid = runCommand("wvdial 3G");
-        if (this.vwdialPid !== null){
+        this.wvdialPid = runCommand("wvdial", ["3G"]);
+        if (this.wvdialPid !== null){
             this.transition( "3G_connected" );
         };
+        console.log(this.wvdialPid);
     },
 
     disconnect3G: function() {
-        killProcess(this.vwdialPid);
+        console.log("killing process", this.wvdialPid);
+        kill(this.wvdialPid, 'SIGKILL');
         this.transition( "3G_disconnected" );
     },
 
@@ -32,7 +33,7 @@ var fsm = new machina.Fsm({
             },
 
             "tell.connected" : function( payload ) {
-                console.log("connected, pid: " + this.vwdialPid)
+                console.log("connected, pid: " + this.wvdialPid)
             }
         },
 
@@ -45,40 +46,13 @@ var fsm = new machina.Fsm({
 });
 
 
-function runCommand(command) {
-  var myProcess = exec(command);
+function runCommand(command, args) {
+  var myProcess = spawn(command, args);
+  console.log("nodeprocess :", myProcess.pid, "myProcess: ", process.pid);
   myProcess.stdout.pipe(process.stdout);
   myProcess.stderr.pipe(process.stderr);
-  if (myProcess.error !== null){
-    return null;
-  } else {
-    return myProcess.pid
-  }
-
+  return myProcess.pid
 };
 
-
-function killProcess(pid, signal, callback) {
-    signal   = signal || 'SIGKILL';
-    callback = callback || function () {};
-    var killTree = true;
-    if(killTree) {
-        psTree(pid, function (err, children) {
-            [pid].concat(
-                children.map(function (p) {
-                    return p.PID;
-                })
-            ).forEach(function (tpid) {
-                try { process.kill(tpid, signal) }
-                catch (ex) { }
-            });
-            callback();
-        });
-    } else {
-        try { process.kill(pid, signal) }
-        catch (ex) { }
-        callback();
-    }
-};
 
 module.exports = fsm
