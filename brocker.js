@@ -19,6 +19,9 @@ function processRequest(command) {
       case "disconnect3G":
           return fsm.disconnect3G();
           break;
+      case "cleanConnexion":
+          return fsm.cleanConnexion();
+          break;
       default:
           return "Unrecognized command " + command
   }
