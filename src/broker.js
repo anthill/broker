@@ -5,7 +5,6 @@ var fsm = require('./fsm.js');
 var Promise = require('es6-promise').Promise;
 
 
-
 function processRequest(rawCommand) {
 
   var commandArgs = rawCommand.split(":");

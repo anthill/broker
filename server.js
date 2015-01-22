@@ -4,7 +4,8 @@ var express = require('express');
 var connect = require('connect');
 var app = express();
 
-var processRequest = require('./broker.js')
+var processRequest = require('./src/broker.js')
+var storeRequest = require('./src/storage.js')
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded());
@@ -12,6 +13,7 @@ app.use(bodyParser.urlencoded());
 
 app.post('/', function(req, res) {
    console.log(req.body);
+
    if (req.body.command !== undefined){
       processRequest(req.body.command)
          .then(function(msg){
@@ -20,7 +22,15 @@ app.post('/', function(req, res) {
          .catch(function(msg){
             res.json(msg);
          });
-   };
+   } else if (req.body.Body !== undefined){
+      storeRequest(req.body)
+         .then(function(msg){
+            console.log("Storage SUCCESS");
+         })
+         .catch(function(msg){
+            console.log("Storage FAILURE: " + msg);
+         });
+   }
 });
 
 
