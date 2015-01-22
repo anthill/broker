@@ -18,7 +18,7 @@ function processRequest(rawCommand) {
       break;
 
     case 1:
-
+      // command with no parameter
       var command = commandArgs[0];
 
       switch(command) {
@@ -46,10 +46,22 @@ function processRequest(rawCommand) {
       }
 
     case 2:
-
+      // command with one parameter
       switch(commandArgs[0]) {
         case "makeTunnel":
             return fsm.makeTunnel(commandArgs[1]);
+            break;
+        default:
+          return new Promise(function(resolve, reject){
+              reject("Unrecognized command " + rawCommand);
+            });
+      }
+
+    case 3:
+      // command with 2 parameters
+      switch(commandArgs[0]) {
+        case "send":
+            return fsm.sendMessage(commandArgs[1], commandArgs[2]);
             break;
         default:
           return new Promise(function(resolve, reject){

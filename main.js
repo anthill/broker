@@ -11,13 +11,16 @@ app.use(bodyParser.urlencoded());
 
 
 app.post('/', function(req, res) {
-   processRequest(req.body.command)
-      .then(function(msg){
-         res.json(msg);
-      })
-      .catch(function(msg){
-         res.json(msg);
-      });
+   console.log(req.body);
+   if (req.body.command !== undefined){
+      processRequest(req.body.command)
+         .then(function(msg){
+            res.json(msg);
+         })
+         .catch(function(msg){
+            res.json(msg);
+         });
+   };
 });
 
 

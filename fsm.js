@@ -6,7 +6,8 @@ var kill = require('tree-kill');
 var Promise = require('es6-promise').Promise;
 
 var CONNECTION_TIMOUT = 20 * 1000;
-var SSH_OK = 3 * 1000;
+var SSH_TIMEOUT = 3 * 1000;
+var QUERY_TIMOUT = 10*1000;
 
 
 var fsm = new machina.Fsm({
@@ -119,8 +120,8 @@ var fsm = new machina.Fsm({
                         reject({pid: myProcess.pid, msg:"Port already in use."});
                     }
                 });
-                // if no error after SSH_OK then validate the connexion
-                setTimeout(function(){resolve(myProcess.pid)}, SSH_OK);
+                // if no error after SSH_TIMEOUT then validate the connexion
+                setTimeout(function(){resolve(myProcess.pid)}, SSH_TIMEOUT);
 
 
             })
@@ -155,6 +156,45 @@ var fsm = new machina.Fsm({
                 reject1("FAILURE");
             };
         });
+    },
+
+    sendMessage: function(number, body) {
+
+        var self = this;
+
+        return new Promise(function(resolve1, reject1){
+
+            new Promise(function(resolve, reject){
+                var myProcess = spawn("gammu-smsd-inject", ["TEXT", number, "-text", body]);
+
+                myProcess.stderr.on("data", function(chunkBuffer){
+                    var message = chunkBuffer.toString();
+                    console.log("=> " + message);
+                    reject({msg: "Error: " + message});
+                });
+
+                myProcess.stdout.on("data", function(chunkBuffer){
+                    var message = chunkBuffer.toString();
+                    console.log("=> " + message);
+                    if (message.indexOf("Written message with ID") !== -1){
+                        resolve();
+                    }
+                });
+                // timout 
+                setTimeout(function(){reject({msg: "Query timout."})}, QUERY_TIMOUT);
+
+
+            })
+            .then(function(){
+                resolve1("SUCCESS");
+            })
+            .catch(function(err){
+                console.log(err.msg);
+                console.log("Could not send message.");
+                reject1("FAILURE " + err.msg);
+            });
+
+        })
     },
 
     initialState: "3G_disconnected",
