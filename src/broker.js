@@ -3,7 +3,8 @@
 
 var fsm = require('./fsm.js');
 var Promise = require('es6-promise').Promise;
-
+var path = require('path');
+var config = require(path.join(process.cwd(), "config.json"));
 
 function processRequest(rawCommand) {
 
@@ -60,7 +61,8 @@ function processRequest(rawCommand) {
       // command with 2 parameters
       switch(commandArgs[0]) {
         case "send":
-            return fsm.sendMessage(commandArgs[1], commandArgs[2]);
+            var number = commandArgs[2] !== "" ? commandArgs[2] : config.twillio;
+            return fsm.sendMessage(commandArgs[1], number);
             break;
         default:
           return new Promise(function(resolve, reject){

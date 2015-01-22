@@ -9,17 +9,22 @@ function storeRequest(message) {
 
    return new Promise(function(resolve, reject){
 
-      var line = [message.SmsSid, message.From, message.Body].join(",") + "\n";
+      if (config.authorizedNumbers.indexOf(message.From) > -1) {
 
-      fs.writeFile(config.storage, line, function(err) {
-         if(err) {
-            console.log(err);
-            reject(err);
-         } else {
-            resolve("SUCESS");              
-         }
-      });
+         var line = [message.SmsSid, message.From, message.Body].join(",") + "\n";
 
+         fs.writeFile(config.storage, line, function(err) {
+            if(err) {
+               console.log(err);
+               reject(err);
+            } else {
+               resolve("SUCESS");              
+            }
+         });
+
+      } else {
+         reject("Unauthorized number:" + message.From);
+      };
 
    })
 
