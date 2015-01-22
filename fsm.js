@@ -20,7 +20,7 @@ var fsm = new machina.Fsm({
 
         return new Promise(function(resolve1, reject1){
 
-            if (this.state !== "3G_connected") {
+            if (self.state !== "3G_connected") {
 
                 new Promise(function(resolve, reject){
                     var myProcess = spawn("wvdial", ["3G"]);
@@ -30,18 +30,15 @@ var fsm = new machina.Fsm({
                         var message = chunkBuffer.toString();
                         console.log("=> " + message);
                         if (message.indexOf("Device or resource busy") !== -1){
-                            setTimeout(function(){reject({pid: myProcess.pid, msg:"[Brocker] Ressource busy."})}, CONNECTION_TIMOUT);
+                            setTimeout(function(){reject({pid: myProcess.pid, msg:"Ressource busy."})}, CONNECTION_TIMOUT);
                         } else if (message.indexOf("The PPP daemon has died") !== -1){
-                            setTimeout(function(){reject({pid: myProcess.pid, msg:"[Brocker] PPP died."})}, CONNECTION_TIMOUT);
+                            setTimeout(function(){reject({pid: myProcess.pid, msg:"PPP died."})}, CONNECTION_TIMOUT);
                         } else if (message.indexOf("local  IP address") !== -1){
                             resolve(myProcess.pid);
                         } else {
-                            setTimeout(function(){reject({pid: myProcess.pid, msg:"[Brocker] Request time out."})}, CONNECTION_TIMOUT);
+                            setTimeout(function(){reject({pid: myProcess.pid, msg:"Request time out."})}, CONNECTION_TIMOUT);
                         }
-                        
                     });
-
-
                 })
                 .then(function(pid){
                     self.wvdialPid = pid;
@@ -119,7 +116,7 @@ var fsm = new machina.Fsm({
                     var message = chunkBuffer.toString();
                     console.log("=> " + message);
                     if (message.indexOf("Warning: remote port forwarding failed for listen port") !== -1){
-                        reject({pid: myProcess.pid, msg:"[Brocker] Port already in use."});
+                        reject({pid: myProcess.pid, msg:"Port already in use."});
                     }
                 });
                 // if no error after SSH_OK then validate the connexion
