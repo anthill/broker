@@ -4,7 +4,7 @@ var express = require('express');
 var connect = require('connect');
 var app = express();
 
-var processRequest = require('./brocker.js')
+var processRequest = require('./broker.js')
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded());
