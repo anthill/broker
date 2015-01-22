@@ -11,17 +11,22 @@ app.use(bodyParser.urlencoded());
 
 
 app.post('/', function(req, res) {
-    var result = processRequest(req.body.command);
-    res.json(result);
+   processRequest(req.body.command)
+      .then(function(msg){
+         res.json(msg);
+      })
+      .catch(function(msg){
+         res.json(msg);
+      });
 });
 
 
 var server = app.listen(3000, function () {
 
-  var host = server.address().address
-  var port = server.address().port
+   var host = server.address().address
+   var port = server.address().port
 
-  console.log('Broker listening at http://%s:%s', host, port)
+   console.log('Broker listening at http://%s:%s', host, port)
 
 })
 

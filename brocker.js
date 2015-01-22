@@ -2,8 +2,7 @@
 
 
 var fsm = require('./fsm.js');
-
-
+var Promise = require('es6-promise').Promise;
 
 
 
@@ -14,15 +13,19 @@ function processRequest(rawCommand) {
   switch(commandArgs.length) {
 
     case 0:
+
       return "Unrecognized command " + rawCommand;
       break;
 
     case 1:
+
       var command = commandArgs[0];
 
       switch(command) {
         case "status":
-            return fsm.state;
+            return new Promise(function(resolve, reject){
+              resolve(fsm.state);
+            });
             break;
         case "connect3G":
             return fsm.connect3G();
@@ -37,8 +40,9 @@ function processRequest(rawCommand) {
             return fsm.cleanTunnel();
             break;
         default:
-            return "Unrecognized command " + command;
-            break;
+            return new Promise(function(resolve, reject){
+              reject("Unrecognized command " + command);
+            });
       }
 
     case 2:
@@ -48,9 +52,9 @@ function processRequest(rawCommand) {
             return fsm.makeTunnel(commandArgs[1]);
             break;
         default:
-            return "Unrecognized command " + rawCommand;
-            break;
-
+          return new Promise(function(resolve, reject){
+              reject("Unrecognized command " + rawCommand);
+            });
       }
   
   }
