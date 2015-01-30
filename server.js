@@ -26,9 +26,11 @@ app.post('/', function(req, res) {
       storeRequest(req.body)
          .then(function(msg){
             console.log("Storage SUCCESS");
+            res.json("OK");
          })
          .catch(function(msg){
             console.log("Storage FAILURE: " + msg);
+            res.json("FAIL");
          });
    }
 });
