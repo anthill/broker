@@ -98,7 +98,6 @@ var fsm = new machina.Fsm({
         });
     },
 
-
     makeTunnel: function(port) {
 
         var self = this;
