@@ -4,7 +4,7 @@ var Promise = require('es6-promise').Promise;
 var fs = require('fs');
 var path = require('path');
 
-var decoder = require('6sense/js/codec/decodeForSMS.js');
+var decoder = require('6sense/js/codec/decodeFromSMS.js');
 
 var config = require(path.join(process.cwd(), "config.json"));
 
