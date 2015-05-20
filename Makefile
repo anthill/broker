@@ -8,7 +8,7 @@ startcontainer:
 	@cp server.js docker/.tmp/
 	@cp config.json docker/.tmp/
 	@cp package.json docker/.tmp/
-	@cd docker && docker build -t ants/broker:v1 .
+	@cd docker && docker build --rm -t ants/broker:v1 .
 	@rm -rf docker/.tmp
 	@docker run -d -e VIRTUAL_HOST=broker.ants.builders -e VIRTUAL_PORT=4000 -p 4000:4000 ants/broker:v1
 	$(ECHO_SUCCESS) "Succesfully launched broker api container."

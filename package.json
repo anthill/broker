@@ -9,6 +9,7 @@
   "author": "Alexandre Vallette",
   "license": "MIT",
   "dependencies": {
+    "6sense": "0.0.1",
     "body-parser": "^1.10.1",
     "connect": "^3.3.4",
     "es6-promise": "^2.0.1",
