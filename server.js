@@ -7,7 +7,7 @@ var app = express();
 var fs = require("fs");
 var processRequest = require('./src/broker.js')
 var storeRequest = require('./src/storage.js')
-var path = require('path');
+
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded());
 var path = require('path');
@@ -47,7 +47,7 @@ io.set('origins', '*:*');
 
 io.on('connection', function(socket) {
 
-   path.exists(config.storage, function(exists) { 
+   fs.exists(config.storage, function(exists) { 
 
       fs.readFile(config.storage, function(err, data){
          if (err) throw err;
