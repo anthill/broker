@@ -59,7 +59,7 @@ io.on('connection', function(socket) {
             socket.emit('data', [Date.parse(result.date), parseFloat(result.signal_strengths.length)]);
          })
       });
-   }
+   });
 
 
 });
