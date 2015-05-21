@@ -52,8 +52,8 @@ io.on('connection', function(socket) {
       console.log("xxx")
       fs.readFile(config.storage, function(err, data){
          if (err) throw err;
-         console.log(data);
-         var lines = data.toString().split("\n");
+         console.log(data.toString());
+         var lines = data.toString().split("\n").filter(function(line){return line.trim().length > 0});
          var lastLine = lines[lines.length - 1];
          console.log(lastLine);
          var obj = JSON.parse(lastLine);
