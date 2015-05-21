@@ -47,12 +47,15 @@ io.set('origins', '*:*');
 
 io.on('connection', function(socket) {
 
-
+   console.log("connection")
    fs.watchFile(config.storage, function (curr, prev) {
+      console.log("xxx")
       fs.readFile(config.storage, function(err, data){
          if (err) throw err;
+         console.log(data);
          var lines = data.toString().split("\n");
          var lastLine = lines[lines.length - 1];
+         console.log(lastLine);
          var obj = JSON.parse(lastLine);
          obj.results.forEach(function(result){
             console.log("emitting",result.date, result.signal_strengths.length);
