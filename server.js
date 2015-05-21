@@ -55,10 +55,11 @@ io.on('connection', function(socket) {
          var lastLine = lines[lines.length - 1];
          var obj = JSON.parse(lastLine);
          obj.results.forEach(function(result){
-            numbers.push([Date.parse(result.date), parseFloat(result.signal_strengths.length)]);
-         });
+            console.log("emitting",result.date, result.signal_strengths.length);
+            socket.emit('data', [Date.parse(result.date), parseFloat(result.signal_strengths.length)]);
+         })
       });
-   });
+   }
 
 
 });
