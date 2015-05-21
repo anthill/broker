@@ -47,9 +47,20 @@ io.set('origins', '*:*');
 
 io.on('connection', function(socket) {
 
-   console.log("connection")
+   fs.readFile(config.storage, function(err, data){
+      if (err) throw err;
+      var lines = data.toString().split("\n").filter(function(line){return line.trim().length > 0});
+      lines.forEach(function(line){
+         var obj = JSON.parse(line);
+         obj.results.forEach(function(result){
+            console.log("emitting",result.date, result.signal_strengths.length);
+            socket.emit('data', [Date.parse(result.date), parseFloat(result.signal_strengths.length)]);
+         })         
+      })
+
+   });
+
    fs.watchFile(config.storage, function (curr, prev) {
-      console.log("xxx")
       fs.readFile(config.storage, function(err, data){
          if (err) throw err;
          console.log(data.toString());
