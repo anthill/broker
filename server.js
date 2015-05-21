@@ -2,13 +2,17 @@
 
 var express = require('express');
 var connect = require('connect');
+var http = require('http');
 var app = express();
-
+var fs = require("fs");
 var processRequest = require('./src/broker.js')
 var storeRequest = require('./src/storage.js')
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded());
+var path = require('path');
+var config = require(path.join(process.cwd(), "config.json"));
+
 
 
 app.post('/', function(req, res) {
@@ -36,7 +40,37 @@ app.post('/', function(req, res) {
 });
 
 
-var server = app.listen(4000, function () {
+var server = http.createServer(app);
+var io = require('socket.io')(server);
+
+io.set('origins', '*:*');
+
+io.on('connection', function(socket) {
+
+
+   fs.watchFile(config.storage, function (curr, prev) {
+      fs.readFile(config.storage, function(err, data){
+         if (err) throw err;
+         var lines = data.toString().split("\n");
+         var lastLine = lines[lines.length - 1];
+         var obj = JSON.parse(lastLine);
+         obj.results.forEach(function(result){
+            numbers.push([Date.parse(result.date), parseFloat(result.signal_strengths.length)]);
+         });
+      });
+   });
+
+
+});
+
+app.use(express.static('./public'));
+
+
+app.get('/', function (req, res) {
+  res.sendFile(__dirname + '/index.html');
+});
+
+var server = server.listen(4000, function () {
 
    var host = server.address().address
    var port = server.address().port

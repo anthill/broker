@@ -16,7 +16,7 @@ function storeRequest(message) {
 
          decoder(message.Body)
          .then(function(decodedMsg){
-            var line = [message.From, JSON.stringify(decodedMsg)].join(",") + "\n";
+            var line = JSON.stringify({sender : message.From, results: decodedMsg}) + "\n";
 
             fs.appendFile(config.storage, line, function(err) {
                if(err) {
