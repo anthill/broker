@@ -7,7 +7,7 @@ var app = express();
 var fs = require("fs");
 var processRequest = require('./src/broker.js')
 var storeRequest = require('./src/storage.js')
-
+var path = require('path');
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded());
 var path = require('path');
@@ -47,17 +47,20 @@ io.set('origins', '*:*');
 
 io.on('connection', function(socket) {
 
-   fs.readFile(config.storage, function(err, data){
-      if (err) throw err;
-      var lines = data.toString().split("\n").filter(function(line){return line.trim().length > 0});
-      lines.forEach(function(line){
-         var obj = JSON.parse(line);
-         obj.results.forEach(function(result){
-            console.log("emitting",result.date, result.signal_strengths.length);
-            socket.emit('data', [Date.parse(result.date), parseFloat(result.signal_strengths.length)]);
-         })         
-      })
+   path.exists(config.storage, function(exists) { 
 
+      fs.readFile(config.storage, function(err, data){
+         if (err) throw err;
+         var lines = data.toString().split("\n").filter(function(line){return line.trim().length > 0});
+         lines.forEach(function(line){
+            var obj = JSON.parse(line);
+            obj.results.forEach(function(result){
+               console.log("emitting",result.date, result.signal_strengths.length);
+               socket.emit('data', [Date.parse(result.date), parseFloat(result.signal_strengths.length)]);
+            })         
+         })
+
+      });
    });
 
    fs.watchFile(config.storage, function (curr, prev) {
