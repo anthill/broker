@@ -16,7 +16,6 @@ var config = require(path.join(process.cwd(), "config.json"));
 
 
 app.post('/', function(req, res) {
-   console.log(req.body);
 
    if (req.body.command !== undefined){
       processRequest(req.body.command)
@@ -62,11 +61,12 @@ io.on('connection', function(socket) {
 
    //    });
    // });
+   console.log("connection");
 
    fs.watchFile(config.storage, function (curr, prev) {
+      console.log("the storage file has change");
       fs.readFile(config.storage, function(err, data){
          if (err) throw err;
-         console.log(data.toString());
          var lines = data.toString().split("\n").filter(function(line){return line.trim().length > 0});
          var lastLine = lines[lines.length - 1];
          console.log(lastLine);
