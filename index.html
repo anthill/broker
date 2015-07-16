@@ -2,37 +2,51 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script type="text/javascript" src="smoothie.js"></script>
-    <script src="socket.io.js"></script>
+    <script type="text/javascript" src="/dygraph-combined.js"></script>
+    <script src="/socket.io.js"></script>
     <script type="text/javascript">
-
-      var socket = io('https://broker.ants.builders');
-      // var socket = io('http://localhost:4000');
-      var fig = new TimeSeries();
-
-
-      socket.on('data', function (data) {
-        console.log("received",data)
-        fig.append(data[0], data[1]);
-      });
-
       
-      function createTimeline() {
-        var chart = new SmoothieChart({
-          millisPerPixel:1000,
-          timestampFormatter:SmoothieChart.timeFormatter,
-          grid:{strokeStyle:'transparent'}
-        });
-        chart.addTimeSeries(fig, { strokeStyle: 'rgba(0, 255, 0, 1)', fillStyle: 'rgba(0, 255, 0, 0.2)', lineWidth: 4 });
-        chart.streamTo(document.getElementById("chart"), 500);
-      }
+      //var socket = io('https://broker.ants.builders');
+var socket = io('http://localhost:7000');
+var graphs = {};
+
+socket.on('data', function (data) {
+    if (graphs[data.name] != undefined) {
+	
+	if (data.cmd === "point") {
+	    graphs[data.name].data.push([new Date(data.x), data.y]);
+	    graphs[data.name].graph.updateOptions({'file': graphs[data.name].data});
+	}
+    }
+    else if (data.cmd === "point") {
+	graphs[data.name] = {div: document.createElement('div'), data: [], graph: undefined};
+
+	//add title
+	var h = document.createElement("p");
+	var t = document.createTextNode(data.name + " uptime :");
+	document.body.appendChild(h);
+	h.appendChild(t);
+
+	document.body.appendChild(graphs[data.name].div);
+	graphs[data.name].data.push([new Date(data.x), data.y]);
+	graphs[data.name].graph = new Dygraph(graphs[data.name].div, graphs[data.name].data,
+					      {
+						  drawPoints: true,
+						  showRoller: true,
+						  valueRange: [0.0, 1.2],
+						  labels: ['Time', 'Connected'],
+						  strokeWidth: 4
+					      });
+    }
+    graphs[data.name].graph.updateOptions({'file': graphs[data.name].data});
+    console.log("received",data)
+});
+
     </script>
   </head>
-  <body onload="createTimeline()">
-
-    <p>Number of devices nearby:</p>
-
-    <canvas id="chart" width="1200" height="500"></canvas>
-
+  <body>
+    
+    <H2>Graphs of uptime for each sensor :</H2>
+        
   </body>
 </html>
