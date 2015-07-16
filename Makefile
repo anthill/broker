@@ -4,11 +4,8 @@ all: startcontainer
 
 startcontainer:
 	@mkdir docker/.tmp
-	@cp -r src docker/.tmp/
-	@cp -r public docker/.tmp/
 	@cp index.html docker/.tmp/
 	@cp server.js docker/.tmp/
-	@cp config.json docker/.tmp/
 	@cp package.json docker/.tmp/
 	@cd docker && docker build --rm -t ants/broker:v1 .
 	@rm -rf docker/.tmp
