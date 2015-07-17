@@ -28,13 +28,17 @@ var client = net.connect(
 
 function sendEveryInfos(socket) {
     Object.keys(clients).forEach(function(key) {
-	if (clients[key] != undefined && clients[key].log != undefined && clients[key].log.length != 0) {
-	    socket.emit('data',
-			{cmd: "point",
-			 name: getClientName(clients[key]),
-			 x: clients[key].log[clients[key].log.length - 1].timestamp,
-			 y: 0});
-	}
+		if (clients[key] != undefined && clients[key].log != undefined && clients[key].log.length != 0) {
+		    socket.emit(
+		    	'data',
+				{
+					cmd: "point",
+					name: getClientName(clients[key]),
+					x: clients[key].log[clients[key].log.length - 1].timestamp,
+					y: 0
+				}
+			);
+		}
     });
 }
 
@@ -57,7 +61,7 @@ io.on('connection', function(socket) {
 });
 
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/index.html');
+	res.sendFile(__dirname + '/index.html');
 });
 
 var server = server.listen(serverPort, function () {
