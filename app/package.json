@@ -2,21 +2,17 @@
   "name": "brocker",
   "version": "0.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "express": "node app/express/server.js",
+    "tcp": "node app/tcp/server.js"
   },
   "author": "Alexandre Vallette",
   "license": "MIT",
   "dependencies": {
-    "6sense": "0.0.1",
-    "body-parser": "^1.10.1",
     "connect": "^3.3.4",
     "dygraphs": "^1.1.1",
-    "es6-promise": "^2.0.1",
     "express": "^4.10.7",
-    "machina": "^0.4.0",
-    "socket.io": "^1.3.5",
-    "tree-kill": "0.0.6"
+    "socket.io": "^1.3.5"
   }
 }
