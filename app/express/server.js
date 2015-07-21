@@ -22,8 +22,8 @@ console.log("======", process.env.TCP_PORT_5000_TCP_ADDR, process.env.TCP_PORT_5
 
 var client = net.connect(
 {
-	port: process.env.INTERNAL_PORT, 
-	host: process.env.TCP_PORT_5000_TCP_ADDR 
+	port: process.env.INTERNAL_PORT != undefined ? process.env.INTERNAL_PORT : 6000,
+	host: process.env.TCP_PORT_5000_TCP_ADDR != undefined ? process.env.TCP_PORT_5000_TCP_ADDR : "127.0.0.1" 
 }, function() {
 	console.log("Connected");
 }
@@ -35,26 +35,17 @@ client.on('error', function(err) {
 });
 
 
-
 function sendEveryInfos(socket) {
-	console.log("sending every infos");
 	Object.keys(clients).forEach(function(key) {
 		if (clients[key] != undefined && clients[key].log != undefined && clients[key].log.length != 0) {
-			console.log("sending " + clients[key].name + " infos");
 			clients[key].log.forEach(function(log) {
 				console.log("sensor " + clients[key].name + " : " + JSON.stringify(log));
-				socket.emit('data',
-				{
-					cmd: "point",
-					name: clients[key].name,
-					x: log.timestamp,
-					y: 0
-				});
+				socket.emit('data', {cmd: "point", name: clients[key].name, x: log.timestamp, y: log.event === "connected" ? 0 : 1});
+				socket.emit('data', {cmd: "point", name: clients[key].name, x: log.timestamp, y: log.event === "connected" ? 1 : 0});
 			});
 		}
 	});
 }
-
 
 // Send data to the frontend
 
@@ -68,7 +59,6 @@ io.on('connection', function(socket) {
 		var client = JSON.parse(data.toString());
 
 		clients[client.data.name] = client.data;
-		console.log("data received : " + JSON.stringify(client));
 
 		if (client.type === "connection") {
 			socket.emit('data', {cmd: "point", name: client.data.name, x: client.data.log[client.data.log.length - 1].timestamp, y: 0});

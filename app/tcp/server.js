@@ -91,6 +91,10 @@ monitorIncoming.on('error', function(err) {
 
 monitorIncoming.listen(monitorPort);
 
+monitorIncoming.on('error', function(err) {
+    console.log("[ERROR] : ", err.message);
+});
+
 // Send data to the webserver
 
 var monitorOutgoing = net.createServer(function(socket) {
@@ -99,6 +103,10 @@ var monitorOutgoing = net.createServer(function(socket) {
 		socket.write(JSON.stringify(data));
 	});
 
+	socket.on("error", function(err) {
+		console.log("[ERROR] : ", err.message);
+	});
+
 });
 
-monitorOutgoing.listen(process.env.INTERNAL_PORT);
+monitorOutgoing.listen(process.env.INTERNAL_PORT != undefined ? process.env.INTERNAL_PORT : 6000);
