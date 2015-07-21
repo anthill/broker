@@ -80,10 +80,13 @@ var monitorIncoming = net.createServer(function(socket) {
 		delete clients[save.id];
 	});
 
-	socket.on('error', function(err) {
-		console.log("[ERROR] : ", err.message);
-	});
+});
 
+monitorIncoming.on('error', function(err) {
+	console.log("[ERROR] : ", err.message);
+	if (err.code == "EADDRINUSE") {
+		console.log("address in use, please retry later ...");
+	}
 });
 
 monitorIncoming.listen(monitorPort);
