@@ -11,8 +11,8 @@ var io = require('socket.io')(server);
 
 var clients = {};
 
-app.use("/socket.io.js", express.static(path.join(__dirname, '../node_modules/socket.io/node_modules/socket.io-client/socket.io.js')));
-app.use("/dygraph-combined.js", express.static(path.join(__dirname, '../node_modules/dygraphs/dygraph-combined.js')));
+app.use("/socket.io.js", express.static(path.join(__dirname, '../../node_modules/socket.io/node_modules/socket.io-client/socket.io.js')));
+app.use("/dygraph-combined.js", express.static(path.join(__dirname, '../../node_modules/dygraphs/dygraph-combined.js')));
 
 var serverPort = 7000;
 
