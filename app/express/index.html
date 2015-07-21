@@ -2,23 +2,23 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script type="text/javascript" src="/dygraph-combined.js"></script>
-    <script src="/socket.io.js"></script>
-    <script type="text/javascript">
-      
-      //var socket = io('https://broker.ants.builders');
+	<script type="text/javascript" src="/dygraph-combined.js"></script>
+	<script src="/socket.io.js"></script>
+	<script type="text/javascript">
+	  
+	  //var socket = io('https://broker.ants.builders');
 var socket = io('http://localhost:7000');
 var graphs = {};
 
 socket.on('data', function (data) {
-    if (graphs[data.name] != undefined) {
+	if (graphs[data.name] != undefined) {
 	
 	if (data.cmd === "point") {
-	    graphs[data.name].data.push([new Date(data.x), data.y]);
-	    graphs[data.name].graph.updateOptions({'file': graphs[data.name].data});
+		graphs[data.name].data.push([new Date(data.x), data.y]);
+		graphs[data.name].graph.updateOptions({'file': graphs[data.name].data});
 	}
-    }
-    else if (data.cmd === "point") {
+	}
+	else if (data.cmd === "point") {
 	graphs[data.name] = {div: document.createElement('div'), data: [], graph: undefined};
 
 	//add title
@@ -30,23 +30,23 @@ socket.on('data', function (data) {
 	document.body.appendChild(graphs[data.name].div);
 	graphs[data.name].data.push([new Date(data.x), data.y]);
 	graphs[data.name].graph = new Dygraph(graphs[data.name].div, graphs[data.name].data,
-					      {
+						  {
 						  drawPoints: true,
 						  showRoller: true,
 						  valueRange: [0.0, 1.2],
 						  labels: ['Time', 'Connected'],
 						  strokeWidth: 4
-					      });
-    }
-    graphs[data.name].graph.updateOptions({'file': graphs[data.name].data});
-    console.log("received",data)
+						  });
+	}
+	graphs[data.name].graph.updateOptions({'file': graphs[data.name].data});
+	console.log("received",data)
 });
 
-    </script>
+	</script>
   </head>
   <body>
-    
-    <H2>Graphs of uptime for each sensor :</H2>
-        
+	
+	<H2>Graphs of uptime for each sensor :</H2>
+		
   </body>
 </html>
