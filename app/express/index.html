@@ -35,7 +35,8 @@ socket.on('data', function (data) {
 						  showRoller: true,
 						  valueRange: [0.0, 1.2],
 						  labels: ['Time', 'Connected'],
-						  strokeWidth: 4
+						  strokeWidth: 2,
+						  fillGraph: true
 						  });
 	}
 	graphs[data.name].graph.updateOptions({'file': graphs[data.name].data});
