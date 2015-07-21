@@ -16,14 +16,14 @@ app.use("/dygraph-combined.js", express.static(path.join(__dirname, '../node_mod
 
 var serverPort = 7000;
 
-console.log("======", process.env.TCP_PORT_5000_TCP_ADDR, process.env.TCP_PORT_5000_TCP_PORT, "======");
+console.log("======", process.env.TCP_PORT_5100_TCP_ADDR, process.env.TCP_PORT_5100_TCP_PORT, "======");
 
 // Get data from the TCP server
 
 var client = net.connect(
 {
-	port: process.env.INTERNAL_PORT != undefined ? process.env.INTERNAL_PORT : 6000,
-	host: process.env.TCP_PORT_5000_TCP_ADDR != undefined ? process.env.TCP_PORT_5000_TCP_ADDR : "127.0.0.1" 
+	port: process.env.INTERNAL_PORT ? process.env.INTERNAL_PORT : 6000,
+	host: process.env.TCP_PORT_5100_TCP_ADDR ? process.env.TCP_PORT_5100_TCP_ADDR : "127.0.0.1" 
 }, function() {
 	console.log("Connected");
 }
@@ -37,7 +37,7 @@ client.on('error', function(err) {
 
 function sendEveryInfos(socket) {
 	Object.keys(clients).forEach(function(key) {
-		if (clients[key] != undefined && clients[key].log != undefined && clients[key].log.length != 0) {
+		if (clients[key] != undefined && clients[key].log  && clients[key].log.length != 0) {
 			clients[key].log.forEach(function(log) {
 				console.log("sensor " + clients[key].name + " : " + JSON.stringify(log));
 				socket.emit('data', {cmd: "point", name: clients[key].name, x: log.timestamp, y: log.event === "connected" ? 0 : 1});
