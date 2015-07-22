@@ -53,6 +53,7 @@ io.set('origins', '*:*');
 
 io.on('connection', function(socket) {
 
+	var interval = undefined;
 	sendEveryInfos(socket); // Disable to only see new datas on the website
 	client.on('data', function(data){
 
@@ -63,9 +64,17 @@ io.on('connection', function(socket) {
 		if (client.type === "connection") {
 			socket.emit('data', {cmd: "point", name: client.data.name, x: client.data.log[client.data.log.length - 1].timestamp, y: 0});
 			socket.emit('data', {cmd: "point", name: client.data.name, x: client.data.log[client.data.log.length - 1].timestamp, y: 1});
+
+			clearInterval(interval);
+			interval = setInterval(function() {socket.emit('data', {cmd: "point", name: client.data.name, x: new Date().getTime(), y: 1})}, 10000);
+			
 		} else {
 			socket.emit('data', {cmd: "point", name: client.data.name, x: client.data.log[client.data.log.length - 1].timestamp, y: 1});
 			socket.emit('data', {cmd: "point", name: client.data.name, x: client.data.log[client.data.log.length - 1].timestamp, y: 0});
+
+			clearInterval(interval);
+			interval = setInterval(function() {socket.emit('data', {cmd: "point", name: client.data.name, x: new Date().getTime(), y: 0})}, 10000);
+
 		}
 	})
 	
