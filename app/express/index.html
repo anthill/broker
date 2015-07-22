@@ -6,8 +6,8 @@
 	<script src="/socket.io.js"></script>
 	<script type="text/javascript">
 	  
-	  //var socket = io('https://broker.ants.builders');
-var socket = io('http://localhost:7000');
+	  var socket = io('https://broker.ants.builders');
+// var socket = io('http://localhost:7000');
 var graphs = {};
 
 socket.on('data', function (data) {

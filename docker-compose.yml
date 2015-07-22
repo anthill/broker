@@ -11,16 +11,17 @@ express:
       - INTERNAL_PORT=55555
    volumes:
       - app:/broker/app
+   restart: always
 
 tcp:
    build: .
    command: npm run tcp
    ports:
-      - "5000:5000"
+      - "5100:5100"
    environment:
-      - VIRTUAL_HOST=tcp.ants.builders 
-      - VIRTUAL_PORT=5000
+      - VIRTUAL_PORT=5100
       - INTERNAL_PORT=55555
    volumes:
       - app:/broker/app
+   restart: always
 
