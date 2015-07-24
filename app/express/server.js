@@ -73,7 +73,7 @@ io.on('connection', function(socket) {
 
 		clients[client.data.name] = client.data;
 
-		console.log("data received : " + data.toString());
+		//console.log("data received : " + data.toString());
 
 		if (client.type === "connection") {
 			socket.emit('data', {cmd: "point", name: client.data.name, x: client.data.log[client.data.log.length - 1].timestamp, y: client.network});			
