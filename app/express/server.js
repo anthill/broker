@@ -34,15 +34,27 @@ client.on('error', function(err) {
 	process.exit(-1);
 });
 
+function getLastItem(array) {
+	if (!array || !array.length)
+		return undefined;
+	return array[array.length - 1];
+} 
 
 function sendEveryInfos(socket) {
 	Object.keys(clients).forEach(function(key) {
 		if (clients[key] != undefined && clients[key].log != undefined && clients[key].log.length != 0) {
 			clients[key].log.forEach(function(log) {
 				console.log("sensor " + clients[key].name + " : " + JSON.stringify(log));
-				socket.emit('data', {cmd: "point", name: clients[key].name, x: log.timestamp, y: log.event === "connected" ? 0 : 1});
-				socket.emit('data', {cmd: "point", name: clients[key].name, x: log.timestamp, y: log.event === "connected" ? 1 : 0});
+				socket.emit('data', {cmd: "point", name: clients[key].name, x: log.timestamp, y: log.event === "connected" ? log.network : 0});
 			});
+		}
+	});
+}
+
+function refreshGraphs(socket) {
+	Object.keys(clients).forEach(function(key) {
+		if (clients[key] != undefined && clients[key].log != undefined && clients[key].log.length != 0) {
+			socket.emit('data', {cmd: "point", name: clients[key].name, x: new Date().getTime(), y: getLastItem(clients[key].log).network});
 		}
 	});
 }
@@ -61,23 +73,17 @@ io.on('connection', function(socket) {
 
 		clients[client.data.name] = client.data;
 
+		console.log("data received : " + data.toString());
+
 		if (client.type === "connection") {
-			socket.emit('data', {cmd: "point", name: client.data.name, x: client.data.log[client.data.log.length - 1].timestamp, y: 0});
-			socket.emit('data', {cmd: "point", name: client.data.name, x: client.data.log[client.data.log.length - 1].timestamp, y: 1});
-
-			clearInterval(interval);
-			interval = setInterval(function() {socket.emit('data', {cmd: "point", name: client.data.name, x: new Date().getTime(), y: 1})}, 10000);
-			
+			socket.emit('data', {cmd: "point", name: client.data.name, x: client.data.log[client.data.log.length - 1].timestamp, y: client.network});			
 		} else {
-			socket.emit('data', {cmd: "point", name: client.data.name, x: client.data.log[client.data.log.length - 1].timestamp, y: 1});
-			socket.emit('data', {cmd: "point", name: client.data.name, x: client.data.log[client.data.log.length - 1].timestamp, y: 0});
-
-			clearInterval(interval);
-			interval = setInterval(function() {socket.emit('data', {cmd: "point", name: client.data.name, x: new Date().getTime(), y: 0})}, 10000);
-
+			socket.emit('data', {cmd: "point", name: client.data.name, x: client.data.log[client.data.log.length - 1].timestamp, y: client.network});
 		}
 	})
 	
+	refreshGraphs(socket);
+	interval = setInterval(function() {refreshGraphs(socket)}, 10 * 1000);
 	console.log("web connection");
 });
 

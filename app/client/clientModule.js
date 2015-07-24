@@ -5,10 +5,15 @@ var net = require('net');
 var client;
 var timeout = 60, lastmessage = 0;
 var interval;
+var heartbeatMessage = "*";
+
+function setHeartbeatMessage(message) {
+	heartbeatMessage = message;
+}
 
 function heartbeat() {
-	console.log("sending heartbeat");
-	client.write("*");
+	console.log("sending heartbeat : ", heartbeatMessage);
+	client.write(heartbeatMessage);
 }
 
 // Connect to a TCP server and use a heartbeat protocol
@@ -51,4 +56,10 @@ function start(connectInfos, callback) {
 	});
 }
 
-module.exports = {start: start};
+function send(data) {
+	client.write(data);
+	clearInterval(interval);
+	interval = setInterval(heartbeat, (timeout * 1000) / 2);
+}
+
+module.exports = {start: start, send: send, setHeartbeatMessage: setHeartbeatMessage};
