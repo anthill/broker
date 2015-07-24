@@ -6,7 +6,7 @@ var EventEmitter = require('events').EventEmitter;
 var net = require("net");
 var clients = {};
 var timeout = 5;
-var monitorPort = 5000;
+var monitorPort = 5100;
 var eventEmitter = new EventEmitter();
 
 function getLastItem(array) {
